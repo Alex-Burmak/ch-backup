@@ -1,0 +1,24 @@
+name: Qodo AI PR Agent
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr_agent:
+    if: ${{ github.event.sender.type != 'Bot' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - name: PR Agent action step
+        id: pragent
+        uses: qodo-ai/pr-agent@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}            
+          config.model: claude-3-7-sonnet-20250219
+          anthropic.api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          anthropic.base_url: ${{ secrets.ANTHROPIC_BASE_URL }}
+          anthropic.api_model: claude-3-7-sonnet-20250219
