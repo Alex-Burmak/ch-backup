@@ -1,0 +1,14 @@
+[config]
+publish_output_progress = false
+
+[pr_description]
+publish_description_as_comment = true
+enable_help_comment = false
+
+[pr_reviewer]
+require_estimate_effort_to_review = false
+enable_review_labels_effort = false
+final_update_message = false
+
+[pr_code_suggestions]
+publish_output_no_suggestions = false
