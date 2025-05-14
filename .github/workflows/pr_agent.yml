@@ -1,0 +1,31 @@
+name: AI PR Agent
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr_agent:
+    if: ${{ github.event.sender.type != 'Bot' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    env:
+      GITHUB__USER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      CONFIG__MODEL: anthropic/claude-3-7-sonnet-20250219
+      CONFIG__FALLBACK_MODELS: "[]"
+      ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
+      ANTHROPIC__KEY: = ${{ secrets.ANTHROPIC_API_KEY }}
+      SSL_VERIFY: .github/workflows/pr_agent.crt
+      CONFIG__REASONING_EFFORT: high
+      CONFIG__ENABLE_CLAUDE_EXTENDED_THINKING: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: 3.12
+      - run: uvx pr-agent --pr_url ${{ github.event.pull_request.html_url }} describe
+      - run: uvx pr-agent --pr_url ${{ github.event.pull_request.html_url }} review
+      - run: uvx pr-agent --pr_url ${{ github.event.pull_request.html_url }} improve
